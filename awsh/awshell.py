@@ -47,6 +47,12 @@ def copy_file(instance_ips, key, file):
     print("files copied", file=sys.stderr)
 
 
+def stderr_input(prompt):
+    print(prompt, file=sys.stderr, end='')
+    res = input()
+    return res
+
+
 @click.command()
 @click.option("--configure", required=False, is_flag=True)
 @click.option("-i", '--key', required=False)
@@ -57,9 +63,9 @@ def copy_file(instance_ips, key, file):
 def main(configure, key, ls, instance: str, copy, files):
     if configure:
         aws_credentials = {}
-        aws_credentials['region_name'] = input("Enter region_name: ")
-        aws_credentials['aws_access_key_id'] = input("Enter aws_access_key_id: ")
-        aws_credentials['aws_secret_access_key'] = input("Enter aws_secret_access_key: ")
+        aws_credentials['region_name'] = stderr_input("Enter region_name: ")
+        aws_credentials['aws_access_key_id'] = stderr_input("Enter aws_access_key_id: ")
+        aws_credentials['aws_secret_access_key'] = stderr_input("Enter aws_secret_access_key: ")
 
         with open(config_file, 'w') as file:
             json.dump(aws_credentials, file)
@@ -69,7 +75,7 @@ def main(configure, key, ls, instance: str, copy, files):
     aws = AWSHConnector(config_file)
 
     if ls:
-        print(aws.instances_string())
+        print(aws.instances_string(), file=sys.stderr)
         exit(EXIT_FAILURE)
 
     if instance is None:
