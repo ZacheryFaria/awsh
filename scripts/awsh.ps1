@@ -1,6 +1,16 @@
+If ($args[0] -eq '--configure') {
+    awshpy $args
+    exit
+}
+
+if ($args[0] -eq '--ls') {
+    awshpy $args
+    exit
+}
+
 $result = (awshpy $args) | Out-String
 
-If (-NOT ($lastExitCode  -eq 2)) {
+If (-NOT ($lastExitCode -eq 2)) {
     echo $result
     exit
 }

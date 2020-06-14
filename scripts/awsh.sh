@@ -3,7 +3,7 @@
 result=$(awshpy ${@:1})
 
 if [ $? != 2 ]; then
-  echo $result
+  echo -n $result
   exit
 fi
 
