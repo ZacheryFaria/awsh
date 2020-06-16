@@ -9,15 +9,18 @@ import json
 user_home = str(Path.home())
 config_file = os.path.join(user_home, '.awshell')
 
+
 def which_ssh():
     global_path = os.environ['PATH']
 
     if os.name == 'nt':
         ssh_name = 'ssh.exe'
+        split_char = ';'
     else:
         ssh_name = 'ssh'
+        split_char = ':'
 
-    for path in global_path.split(';'):
+    for path in global_path.split(split_char):
         fpath = os.path.join(path, ssh_name)
         if os.path.isfile(fpath) and os.access(fpath, os.X_OK):
             return fpath
