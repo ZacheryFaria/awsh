@@ -44,7 +44,7 @@ def enter_ssh(ip, key):
 
 
 def exec_script(instance_ips, key, file):
-    print("executing files", file=sys.stderr)
+    print("executing files")
 
     for ip in instance_ips:
         cmd = ['ssh', '-o', 'StrictHostKeyChecking no', '-i', key, f'ubuntu@{ip}', f'sed -i -e "s/\\r$//" ./{file}; sudo chmod +x ./{file}; sudo ./{file}; exit']
@@ -54,13 +54,13 @@ def exec_script(instance_ips, key, file):
         while p.poll() is None:
             time.sleep(0.1)
 
-    print("execution complete", file=sys.stderr)
+    print("execution complete")
 
 
 def copy_file(instance_ips, key, file):
     processes = []
 
-    print(f"copying file {file}", file=sys.stderr)
+    print(f"copying file {file}")
 
     for ip in instance_ips:
         p = subprocess.Popen(['scp', '-o', 'StrictHostKeyChecking no', '-i', key, file, f'ubuntu@{ip}:/home/ubuntu/{file}'])
@@ -71,13 +71,7 @@ def copy_file(instance_ips, key, file):
         processes = [proc for proc in processes if proc.poll() is None]
         time.sleep(.1)
 
-    print("files copied", file=sys.stderr)
-
-
-def stderr_input(prompt):
-    print(prompt, file=sys.stderr, end='')
-    res = input()
-    return res
+    print("files copied")
 
 
 @click.command()
@@ -90,9 +84,9 @@ def stderr_input(prompt):
 def main(configure, key, ls, instance: str, copy, files):
     if configure:
         aws_credentials = {}
-        aws_credentials['region_name'] = stderr_input("Enter region_name: ")
-        aws_credentials['aws_access_key_id'] = stderr_input("Enter aws_access_key_id: ")
-        aws_credentials['aws_secret_access_key'] = stderr_input("Enter aws_secret_access_key: ")
+        aws_credentials['region_name'] = input("Enter region_name: ")
+        aws_credentials['aws_access_key_id'] = input("Enter aws_access_key_id: ")
+        aws_credentials['aws_secret_access_key'] = input("Enter aws_secret_access_key: ")
 
         with open(config_file, 'w') as file:
             json.dump(aws_credentials, file)
@@ -102,7 +96,7 @@ def main(configure, key, ls, instance: str, copy, files):
     aws = AWSHConnector(config_file)
 
     if ls:
-        print(aws.instances_string(), file=sys.stderr)
+        print(aws.instances_string())
         exit(1)
 
     if instance is None:
