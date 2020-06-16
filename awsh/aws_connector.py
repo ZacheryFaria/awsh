@@ -2,14 +2,13 @@ import boto3
 import fnmatch
 import json
 import os
-from awsh.exit_statuses import EXIT_FAILURE
 
 
 class AWSHConnector:
     def __init__(self, config_file):
         if not os.path.exists(config_file):
             print("Please set your aws credentials with awsh --configure")
-            exit(EXIT_FAILURE)
+            exit(1)
 
         with open(config_file) as file:
             aws_credentials = json.load(file)

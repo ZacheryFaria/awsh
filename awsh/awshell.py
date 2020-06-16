@@ -2,7 +2,6 @@ from awsh.aws_connector import AWSHConnector
 import click
 import subprocess
 import time
-import sys
 import os
 from pathlib import Path
 import json
@@ -17,9 +16,6 @@ def which_ssh():
         ssh_name = 'ssh.exe'
     else:
         ssh_name = 'ssh'
-
-    if os.path.isfile(ssh_name) and os.access(ssh_name, os.X_OK):
-        return program
 
     for path in global_path.split(';'):
         fpath = os.path.join(path, ssh_name)
@@ -46,6 +42,8 @@ def enter_ssh(ip, key):
 def exec_script(instance_ips, key, file):
     print("executing files")
 
+    file = os.path.basename(file)
+
     for ip in instance_ips:
         cmd = ['ssh', '-o', 'StrictHostKeyChecking no', '-i', key, f'ubuntu@{ip}', f'sed -i -e "s/\\r$//" ./{file}; sudo chmod +x ./{file}; sudo ./{file}; exit']
 
@@ -60,10 +58,12 @@ def exec_script(instance_ips, key, file):
 def copy_file(instance_ips, key, file):
     processes = []
 
+    outfile = os.path.basename(file)
+
     print(f"copying file {file}")
 
     for ip in instance_ips:
-        p = subprocess.Popen(['scp', '-o', 'StrictHostKeyChecking no', '-i', key, file, f'ubuntu@{ip}:/home/ubuntu/{file}'])
+        p = subprocess.Popen(['scp', '-o', 'StrictHostKeyChecking no', '-i', key, file, f'ubuntu@{ip}:/home/ubuntu/{outfile}'])
 
         processes.append(p)
 
